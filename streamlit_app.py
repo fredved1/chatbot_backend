@@ -18,10 +18,7 @@ with st.sidebar:
         st.success("API key loaded successfully!")
         st.write(f"Using API key: {openai_api_key[:5]}...")  # API-key verbergen behalve de eerste 5 karakters
     
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
-    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
-    "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
-    
+   
     # Toon model selectie en temperatuur slider als API key is ingevoerd
     if openai_api_key:
         models = get_available_models(openai_api_key)
