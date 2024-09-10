@@ -1,5 +1,5 @@
 import streamlit as st
-from llm_motor import create_chat_model, generate_response, get_available_models
+from llm_motor import LLMMotor, get_available_models
 import os
 from dotenv import load_dotenv
 
@@ -18,7 +18,6 @@ with st.sidebar:
         st.success("API key loaded successfully!")
         st.write(f"Using API key: {openai_api_key[:5]}...")  # API-key verbergen behalve de eerste 5 karakters
     
-   
     # Toon model selectie en temperatuur slider als API key is ingevoerd
     if openai_api_key:
         models = get_available_models(openai_api_key)
@@ -29,9 +28,13 @@ with st.sidebar:
 st.title("UWV Chatbot")
 st.caption("Een Streamlit chatbot aangedreven door OpenAI en LangChain, gespecialiseerd in UWV-diensten")
 
+# Initialiseer LLMMotor
+if "llm_motor" not in st.session_state:
+    st.session_state.llm_motor = LLMMotor(openai_api_key)
+
 # Initialiseer chatgeschiedenis als deze nog niet bestaat
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Ik ben vandaag uw sletje, hoe kan ik u helpen?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hoe kan ik u vandaag helpen met UWV-gerelateerde vragen?"}]
 
 # Toon chatberichten uit de geschiedenis
 for message in st.session_state.messages:
@@ -51,11 +54,8 @@ if prompt := st.chat_input("Stel hier uw vraag over UWV..."):
     # Voeg gebruikersbericht toe aan chatgeschiedenis
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Maak chatmodel aan
-    chat_model = create_chat_model(openai_api_key, model=model, temperature=temperature)
-
     # Genereer antwoord
-    response = generate_response(chat_model, st.session_state.messages)
+    response = st.session_state.llm_motor.generate_response(prompt)
     
     # Toon assistent-antwoord
     with st.chat_message("assistant"):
@@ -63,3 +63,8 @@ if prompt := st.chat_input("Stel hier uw vraag over UWV..."):
     
     # Voeg assistent-antwoord toe aan chatgeschiedenis
     st.session_state.messages.append({"role": "assistant", "content": response})
+
+if st.button("Start nieuw Gesprek"):
+    st.session_state.llm_motor.reset_memory()
+    st.session_state.messages = [{"role": "assistant", "content": "Hoe kan ik u vandaag helpen met UWV-gerelateerde vragen?"}]
+    st.experimental_rerun()

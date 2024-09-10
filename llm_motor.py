@@ -1,5 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, AIMessage
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationChain
 from typing import List, Dict
 from templates.uwv_agent import create_uwv_agent
 
@@ -16,20 +18,35 @@ def create_chat_model(api_key: str, model: str = "gpt-4o", temperature: float = 
         temperature=temperature
     )
 
-# Genereert een antwoord met behulp van het ChatOpenAI model en de UWV-agent
-# Parameters:
-#   chat_model: ChatOpenAI model instantie
-#   messages: Lijst van berichtwoordenboeken
-# Retourneert: Gegenereerd antwoord als een string
-def generate_response(chat_model: ChatOpenAI, messages: List[Dict[str, str]]) -> str:
-    uwv_agent = create_uwv_agent(chat_model)
-    # Zet berichten om naar het juiste formaat voor LangChain
-    langchain_messages = [
-        HumanMessage(content=msg["content"]) if msg["role"] == "user" else AIMessage(content=msg["content"])
-        for msg in messages[1:]  # Sla het eerste assistent-bericht over
-    ]
-    response = uwv_agent.invoke({"messages": langchain_messages})
-    return response.content
+class LLMMotor:
+    def __init__(self, api_key: str, model: str = "gpt-4o", temperature: float = 0.7):
+        self.chat_model = create_chat_model(api_key, model, temperature)
+        self.uwv_agent = create_uwv_agent(self.chat_model)
+        self.memory = ConversationBufferMemory(return_messages=True)
+
+    def generate_response(self, input_message: str) -> str:
+        # Voeg het nieuwe bericht toe aan het geheugen
+        self.memory.chat_memory.add_user_message(input_message)
+
+        # Haal de volledige geschiedenis op, inclusief het nieuwe bericht
+        history = self.memory.chat_memory.messages
+
+        # Gebruik de UWV-agent met de volledige geschiedenis
+        response = self.uwv_agent.invoke({"messages": history})
+        
+        # Voeg het antwoord toe aan het geheugen
+        self.memory.chat_memory.add_ai_message(response.content)
+
+        return response.content
+
+
+
+    # Opmerking: Als je de chatgeschiedenis nodig hebt, 
+    # kun je direct toegang krijgen tot:
+    # self.memory.chat_memory.messages
+    
+    def reset_memory(self):
+        self.memory.clear()
 
 # Haalt een lijst op van beschikbare GPT-modellen van OpenAI
 # Parameters:
