@@ -28,43 +28,30 @@ with st.sidebar:
 st.title("UWV Chatbot")
 st.caption("Een Streamlit chatbot aangedreven door OpenAI en LangChain, gespecialiseerd in UWV-diensten")
 
-# Initialiseer LLMMotor
+# Initialiseer LLMMotor en start een nieuwe conversatie als deze nog niet bestaat
 if "llm_motor" not in st.session_state:
-    st.session_state.llm_motor = LLMMotor(openai_api_key)
+    st.session_state.llm_motor = LLMMotor(openai_api_key, model, temperature)
+    st.session_state.llm_motor.start_new_conversation()
 
-# Initialiseer chatgeschiedenis als deze nog niet bestaat
-if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Hoe kan ik u vandaag helpen met UWV-gerelateerde vragen?"}]
-
-# Toon chatberichten uit de geschiedenis
-for message in st.session_state.messages:
+# Toon de gespreksgeschiedenis
+for message in st.session_state.llm_motor.get_chat_history():
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # Verwerk gebruikersinvoer
 if prompt := st.chat_input("Stel hier uw vraag over UWV..."):
-    # Controleer of API key is ingevoerd
     if not openai_api_key:
         st.info("Voeg alstublieft uw OpenAI API-sleutel toe om door te gaan.")
         st.stop()
 
-    # Toon gebruikersbericht
     st.chat_message("user").markdown(prompt)
     
-    # Voeg gebruikersbericht toe aan chatgeschiedenis
-    st.session_state.messages.append({"role": "user", "content": prompt})
-
-    # Genereer antwoord
-    response = st.session_state.llm_motor.generate_response(prompt)
+    with st.spinner("Even denken..."):
+        response = st.session_state.llm_motor.generate_response(prompt)
     
-    # Toon assistent-antwoord
-    with st.chat_message("assistant"):
-        st.markdown(response)
-    
-    # Voeg assistent-antwoord toe aan chatgeschiedenis
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").markdown(response)
 
-if st.button("Start nieuw Gesprek"):
-    st.session_state.llm_motor.reset_memory()
-    st.session_state.messages = [{"role": "assistant", "content": "Hoe kan ik u vandaag helpen met UWV-gerelateerde vragen?"}]
-    st.experimental_rerun()
+# Start nieuwe conversatie knop
+if st.button("Start Nieuwe Conversatie"):
+    st.session_state.llm_motor.start_new_conversation()
+    st.rerun()

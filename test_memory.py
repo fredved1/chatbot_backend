@@ -32,4 +32,7 @@ if __name__ == "__main__":
     # Voer de test_llm functie uit en sla het resultaat op
     conversation = test_llm()
     
-  
+    # Print de volledige conversatie
+    print("\nVolledige conversatie:")
+    for message in conversation:
+        print(f"{message['role'].capitalize()}: {message['content']}")
