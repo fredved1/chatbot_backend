@@ -1,18 +1,25 @@
 import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from llm_motor import LLMMotor
+from llm_motor import LLMMotor, get_available_models
 import os
+from dotenv import load_dotenv
+
+# Laad de omgevingsvariabelen uit .env
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Zorg ervoor dat u uw API key veilig opslaat, bij voorkeur in een omgevingsvariabele
-api_key = os.environ.get('OPENAI_API_KEY')
+# Haal de API key uit de omgevingsvariabelen
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    raise ValueError("OPENAI_API_KEY is not set in the environment variables")
+
 llm_motor = LLMMotor(api_key)
 
 app = Flask(__name__)
-CORS(app)  # Voeg CORS toe aan de app
+CORS(app)
 
 @app.route('/api/send-message', methods=['POST'])
 def send_message():
@@ -27,16 +34,15 @@ def start_conversation():
     return jsonify({"message": opening_message})
 
 @app.route('/api/available-models', methods=['GET'])
-def get_available_models():
-    models = llm_motor.get_available_models()
+def get_available_models_route():
+    models = get_available_models(api_key)
     return jsonify({"models": models})
 
 @app.route('/api/select-model', methods=['POST'])
 def select_model():
     data = request.json
     model = data.get('model')
-    # Uw LLMMotor heeft geen methode om het model te selecteren, dus we sturen alleen een bevestiging terug
-    # U kunt deze functionaliteit later toevoegen aan uw LLMMotor klasse indien nodig
+    # Implementeer hier de logica om het model te wijzigen als dat nodig is
     return jsonify({"success": True, "message": f"Model {model} geselecteerd"})
 
 @app.route('/api/clear-memory', methods=['POST'])
