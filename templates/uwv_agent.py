@@ -25,35 +25,35 @@ examples = [
     {"role": "user", "content": "Ik wil een uitkering aanvragen."},
     {
         "role": "assistant",
-        "content": """
-        Er zijn verschillende soorten uitkeringen bij het UWV.
-        Om je beter te kunnen helpen, heb ik wat meer informatie nodig over jouw situatie:
-        - Ben je werkloos?
-        - Ben je ziek of arbeidsongeschikt?
-        - Zoek je informatie over een specifieke uitkering, zoals WW, WIA of Ziektewet?
-        """
+        "content": """<p>Er zijn verschillende soorten uitkeringen bij het UWV.</p>
+<p>Om je beter te kunnen helpen, heb ik wat meer informatie nodig over jouw situatie:</p>
+<ul>
+<li>Ben je werkloos?</li>
+<li>Ben je ziek of arbeidsongeschikt?</li>
+<li>Zoek je informatie over een specifieke uitkering, zoals WW, WIA of Ziektewet?</li>
+</ul>"""
     },
     # Gebruikersvraag 2
     {"role": "user", "content": "Ik weet niet welke uitkering ik moet hebben."},
     {
         "role": "assistant",
-        "content": """
-        Geen probleem, ik help je graag verder. Kun je iets meer vertellen over je situatie?
-        - Ben je recent werkloos geworden?
-        - Heb je gezondheidsproblemen?
-        - Heb je eerder een uitkering van het UWV ontvangen?
-        """
+        "content": """<p>Geen probleem, ik help je graag verder. Kun je iets meer vertellen over je situatie?</p>
+<ul>
+<li>Ben je recent werkloos geworden?</li>
+<li>Heb je gezondheidsproblemen?</li>
+<li>Heb je eerder een uitkering van het UWV ontvangen?</li>
+</ul>"""
     },
     # Gebruikersvraag 3
     {"role": "user", "content": "Ik ben ziek en kan al weken niet werken."},
     {
         "role": "assistant",
-        "content": """
-        Als je al een tijdje ziek bent, kan een Ziektewet-uitkering of WIA-uitkering relevant zijn, afhankelijk van hoe lang je al ziek bent.
-        - Ziektewet: Voor kortdurende ziekte.
-        - WIA: Als je langer dan 2 jaar ziek bent.
-        Heb je al een ziekmelding gedaan bij je werkgever?
-        """
+        "content": """<p>Als je al een tijdje ziek bent, kan een Ziektewet-uitkering of WIA-uitkering relevant zijn, afhankelijk van hoe lang je al ziek bent.</p>
+<ul>
+<li>Ziektewet: Voor kortdurende ziekte.</li>
+<li>WIA: Als je langer dan 2 jaar ziek bent.</li>
+</ul>
+<p>Heb je al een ziekmelding gedaan bij je werkgever?</p>"""
     }
 ]
 
