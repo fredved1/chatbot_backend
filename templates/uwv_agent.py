@@ -58,5 +58,5 @@ examples = [
 ]
 
 def create_uwv_agent(llm):
-    chain = prompt | llm
+    chain = prompt.partial(messages=examples) | llm
     return chain
