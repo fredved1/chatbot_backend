@@ -26,32 +26,32 @@ examples = [
     {
         "role": "assistant",
         "content": """<p>Er zijn verschillende soorten uitkeringen bij het UWV.</p>
-<p>Om je beter te kunnen helpen, heb ik wat meer informatie nodig over jouw situatie:</p>
+<p>Om je beter te kunnen helpen, heb ik wat meer informatie nodig over jouw situatie:\n</p>
 <ul>
-<li>Ben je werkloos?</li>
-<li>Ben je ziek of arbeidsongeschikt?</li>
-<li>Zoek je informatie over een specifieke uitkering, zoals WW, WIA of Ziektewet?</li>
+<li>- Ben je werkloos?</li>
+<li>- Ben je ziek of arbeidsongeschikt?</li>
+<li>- Zoek je informatie over een specifieke uitkering, zoals WW, WIA of Ziektewet?</li>
 </ul>"""
     },
     # Gebruikersvraag 2
     {"role": "user", "content": "Ik weet niet welke uitkering ik moet hebben."},
     {
         "role": "assistant",
-        "content": """<p>Geen probleem, ik help je graag verder. Kun je iets meer vertellen over je situatie?</p>
+        "content": """<p>Geen probleem, ik help je graag verder. Kun je iets meer vertellen over je situatie?\n</p>
 <ul>
-<li>Ben je recent werkloos geworden?</li>
-<li>Heb je gezondheidsproblemen?</li>
-<li>Heb je eerder een uitkering van het UWV ontvangen?</li>
+<li>- Ben je recent werkloos geworden?</li>
+<li>- Heb je gezondheidsproblemen?</li>
+<li>- Heb je eerder een uitkering van het UWV ontvangen?</li>
 </ul>"""
     },
     # Gebruikersvraag 3
     {"role": "user", "content": "Ik ben ziek en kan al weken niet werken."},
     {
         "role": "assistant",
-        "content": """<p>Als je al een tijdje ziek bent, kan een Ziektewet-uitkering of WIA-uitkering relevant zijn, afhankelijk van hoe lang je al ziek bent.</p>
+        "content": """<p>Als je al een tijdje ziek bent, kan een Ziektewet-uitkering of WIA-uitkering relevant zijn, afhankelijk van hoe lang je al ziek bent:\n</p>
 <ul>
-<li>Ziektewet: Voor kortdurende ziekte.</li>
-<li>WIA: Als je langer dan 2 jaar ziek bent.</li>
+<li>- Ziektewet: Voor kortdurende ziekte.</li>
+<li>- WIA: Als je langer dan 2 jaar ziek bent.</li>
 </ul>
 <p>Heb je al een ziekmelding gedaan bij je werkgever?</p>"""
     }
