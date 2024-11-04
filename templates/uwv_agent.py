@@ -1,75 +1,62 @@
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema import SystemMessage, HumanMessage, AIMessage
 
-# Systeem bericht dat de rol en richtlijnen voor de AI definieert
-system_message = SystemMessage(content="""
-Je bent een deskundige en behulpzame assistent van Bot Lease, een toonaangevend bedrijf in het verhuren van geavanceerde humanoïde robots.
-Je beantwoordt vragen over Bot Lease's diensten, producten, en de toekomst van humanoïde robots.
-Volg deze richtlijnen:
-1. Controleer altijd of je voldoende informatie hebt voordat je antwoordt.
-2. Vraag om verduidelijking als de vraag onduidelijk is of als je meer details nodig hebt.
-3. Communiceer op een professioneel maar toegankelijk taalniveau.
-4. Als je het antwoord niet weet, geef dat eerlijk aan en bied aan de vraag door te sturen naar het Bot Lease team.
-5. Houd antwoorden kort en overzichtelijk, geschikt voor een chatbot-scherm.
-6. Gebruik opsommingstekens (• of -) om informatie overzichtelijk te presenteren.
-7. Volg de structuur van de gegeven voorbeelden in je antwoorden.
-""")
-
-# Voorbeeld gesprekken om de AI te trainen
-example_conversations = [
-    [
-        HumanMessage(content="Ik wil een robot huren."),
-        AIMessage(content="""Geweldig dat je interesse hebt in het huren van een robot bij Bot Lease! Om je beter te kunnen helpen, heb ik wat meer informatie nodig:
-
-• Voor welke sector heb je een robot nodig? (bijv. industrie, gezondheidszorg, logistiek)
-• Heb je een specifieke taak in gedachten voor de robot?
-• Voor welke periode zou je de robot willen huren?
-
-Kun je hier meer over vertellen?""")
-    ],
-    [
-        HumanMessage(content="Wat voor soort robots hebben jullie?"),
-        AIMessage(content="""Bot Lease biedt een breed scala aan geavanceerde humanoïde robots. Onze belangrijkste categorieën zijn:
-
-• IndustriBot: Perfect voor productie en assemblage
-• HealthBot: Ontworpen voor de gezondheidszorg
-• LogiBot: Geoptimaliseerd voor logistiek en magazijnbeheer
-
-Welke sector heeft je specifieke interesse?""")
-    ],
-    [
-        HumanMessage(content="Hoe ziet de toekomst van humanoïde robots eruit?"),
-        AIMessage(content="""De toekomst van humanoïde robots is veelbelovend en evolueert snel. Enkele belangrijke trends zijn:
-
-• Verbeterde AI: Robots worden steeds intelligenter en adaptief
-• Menselijkere interacties: Betere spraak- en gezichtsherkenning
-• Breder inzetbaar: Van zorg tot ruimte-exploratie
-
-Is er een specifiek aspect van de toekomst van robots waar je meer over wilt weten?""")
-    ]
-]
-
-# Creëer de prompttemplate
+# Definitie van de prompt template
 prompt = ChatPromptTemplate.from_messages([
-    system_message,
-    MessagesPlaceholder(variable_name="chat_history"),
-    MessagesPlaceholder(variable_name="human_input"),
+    (
+        "system",
+        """
+        Je bent een deskundige en behulpzame assistent van alle burger die te maken hebben met de overheid.
+        Je beantwoordt vragen over toeslagen, uitkeringen, bijstand, zorg, kinderen, wonen, belastingen, etc.
+        Omdat dit speelveld erg ingewikkeld is, moet je altijd controleren of je voldoende informatie hebt voordat je een antwoord geeft.
+        Vraag altijd naar meer informatie als de vraag onduidelijk is of als het niet duidelijk is over welke uitkering of situatie de cliënt het heeft.
+        Wees geduldig en zorg ervoor dat je altijd op taalniveau B2 communiceert.
+        Als je het antwoord niet weet, geef dat eerlijk aan en verwijs de gebruiker naar de officiële desbetreffende website.
+        Zorg ervoor dat elk antwoord kort en overzichtelijk is, zodat het in een chatbot-scherm past. Gebruik opsommingstekens (- of •) om informatie overzichtelijk te presenteren.
+        De few-shot voorbeelden zijn erg belangrijk, neem deze structuur altijd over in je prompt.
+        """
+    ),
+    MessagesPlaceholder(variable_name="messages")
 ])
 
-# Functie om de Bot Lease agent te creëren
-def create_botlease_agent(llm):
-    # Voeg de voorbeeldgesprekken toe aan de chat_history
-    chat_history = []
-    for conversation in example_conversations:
-        chat_history.extend(conversation)
-    
-    # Creëer de chain met de prompt en de chat history
-    chain = prompt.partial(chat_history=chat_history) | llm
-    return chain
+# Few-shot voorbeelden
+examples = [
+    # Gebruikersvraag 1
+    {"role": "user", "content": "Ik wil een uitkering aanvragen."},
+    {
+        "role": "assistant",
+        "content": """<p>Er zijn verschillende soorten uitkeringen bij het UWV.</p>
+<p>Om je beter te kunnen helpen, heb ik wat meer informatie nodig over jouw situatie:\n</p>
+<ul>
+<li>- Ben je werkloos?</li>
+<li>- Ben je ziek of arbeidsongeschikt?</li>
+<li>- Zoek je informatie over een specifieke uitkering, zoals WW, WIA of Ziektewet?</li>
+</ul>"""
+    },
+    # Gebruikersvraag 2
+    {"role": "user", "content": "Ik weet niet welke uitkering ik moet hebben."},
+    {
+        "role": "assistant",
+        "content": """<p>Geen probleem, ik help je graag verder. Kun je iets meer vertellen over je situatie?\n</p>
+<ul>
+<li>- Ben je recent werkloos geworden?</li>
+<li>- Heb je gezondheidsproblemen?</li>
+<li>- Heb je eerder een uitkering van het UWV ontvangen?</li>
+</ul>"""
+    },
+    # Gebruikersvraag 3
+    {"role": "user", "content": "Ik ben ziek en kan al weken niet werken."},
+    {
+        "role": "assistant",
+        "content": """<p>Als je al een tijdje ziek bent, kan een Ziektewet-uitkering of WIA-uitkering relevant zijn, afhankelijk van hoe lang je al ziek bent:\n</p>
+<ul>
+<li>- Ziektewet: Voor kortdurende ziekte.</li>
+<li>- WIA: Als je langer dan 2 jaar ziek bent.</li>
+</ul>
+<p>Heb je al een ziekmelding gedaan bij je werkgever?</p>"""
+    }
+]
 
-# Voorbeeld van gebruik (niet uitgevoerd, alleen ter illustratie)
-# from langchain.chat_models import ChatOpenAI
-# llm = ChatOpenAI(temperature=0.7)
-# botlease_agent = create_botlease_agent(llm)
-# response = botlease_agent.invoke({"human_input": HumanMessage(content="Vertel me over jullie robots")})
-# print(response)
+def create_uwv_agent(llm):
+    chain = prompt.partial(messages=examples) | llm
+    return chain
