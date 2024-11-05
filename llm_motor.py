@@ -2,7 +2,7 @@ from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, AIMessage
 from langchain.memory import ConversationBufferMemory
 from typing import List, Dict
-from templates.uwv_agent import create_uwv_agent
+from templates.botlease_agent import create_botlease_agent
 
 def create_chat_model(api_key: str, model: str = "gpt-4o", temperature: float = 0.7):
     return ChatOpenAI(
@@ -14,12 +14,12 @@ def create_chat_model(api_key: str, model: str = "gpt-4o", temperature: float = 
 class LLMMotor:
     def __init__(self, api_key: str, model: str = "gpt-4o", temperature: float = 0.7):
         self.chat_model = create_chat_model(api_key, model, temperature)
-        self.uwv_agent = create_uwv_agent(self.chat_model)
+        self.botlease_agent = create_botlease_agent(self.chat_model)
         self.memory = ConversationBufferMemory(return_messages=True)
 
     def generate_response(self, prompt: str) -> str:
         self.memory.chat_memory.add_user_message(prompt)
-        response = self.uwv_agent.invoke({"messages": self.memory.chat_memory.messages})
+        response = self.botlease_agent.invoke({"messages": self.memory.chat_memory.messages})
         self.memory.chat_memory.add_ai_message(response.content)
         return response.content
 
@@ -34,7 +34,7 @@ class LLMMotor:
 
     def start_new_conversation(self) -> str:
         self.clear_memory()
-        opening_message = "Hallo! Hoe kan ik u vandaag helpen met UWV-gerelateerde vragen?"
+        opening_message = "Hallo! Hoe kan ik u vandaag helpen met vragen over Bot Lease?"
         self.memory.chat_memory.add_ai_message(opening_message)
         return opening_message
 
