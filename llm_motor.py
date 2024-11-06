@@ -34,7 +34,7 @@ class LLMMotor:
 
     def start_new_conversation(self) -> str:
         self.clear_memory()
-        opening_message = "Hallo en welkom bij Bot Lease! Heb je vragen stel ze gerust."
+        opening_message = "Hi! Welcome to BotLease! Do you have any questions about our services?"
         self.memory.chat_memory.add_ai_message(opening_message)
         return opening_message
 
