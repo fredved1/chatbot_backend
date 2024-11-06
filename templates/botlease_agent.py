@@ -13,6 +13,7 @@ prompt = ChatPromptTemplate.from_messages([
 Key Information:
 - Company name: BotLease
 - Website: botlease.nl
+- Contact form: https://botlease.nl/#contact
 - CEO: Thomas Vedder
 - Location: Netherlands
 
@@ -21,7 +22,7 @@ Guidelines:
 2. Communicate in English, unless the visitor starts in another language
 3. Only answer questions about BotLease and its services
 4. Be professional but friendly
-5. When in doubt, refer to contact@botlease.nl
+5. When in doubt, direct users to our contact form at https://botlease.nl/#contact
 6. Be honest about what you do and don't know
 
 For Robot Lease questions:
